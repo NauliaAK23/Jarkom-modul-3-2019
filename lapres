@@ -1,20 +1,99 @@
 1. Seluruh client TIDAK DIPERBOLEHKAN menggunakan konfigurasi IP Statis.
+seluruh Client
+untuk "nano /etc/network/interfaces" hanya perlu
+
+auto eth0
+iface eth0 inet dhcp
+
+untuk menerima ip dari server DHCP
 
 2. (1) Client di subnet 2 mendapatkan peminjaman alamat IP dengan range 192.168.0.2 s.d.
 192.168.0.10 dan 192.168.0.20 s.d. 192.168.0.30 dengan netmask 255.255.255.0.
 
+di server DHCP bagian "nano /etc/dhcp/dhcpd.conf" memiliki settingan seperti dibawah
+subnet 192.168.0.0 netmask 255.255.255.0 {
+    range 192.168.0.2 192.168.0.10;
+    range 192.168.0.20 192.168.0.30;
+    option routers 192.168.0.1;
+    option broadcast-address 192.168.0.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 600;
+    max-lease-time 6000;
+}
+
+dan yang mempernagruhi range ialah 
+    range 192.168.0.2 192.168.0.10;
+    range 192.168.0.20 192.168.0.30;
+
 3. (2) Client di subnet 3 mendapatkan peminjaman alamat IP dengan range dari 192.168.1.2 s.d.
 192.168.1.99 dengan netmask 255.255.255.0.
+di server DHCP bagian "nano /etc/dhcp/dhcpd.conf" memiliki settingan seperti dibawah
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.2 192.168.1.99;
+    option routers 192.168.1.1;
+    option broadcast-address 192.168.1.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 300;
+    max-lease-time 3000;
+} 
+
+dan yang mempernagruhi range ialah
+  range 192.168.1.2 192.168.1.99;
 
 4. (3) Client di subnet 2 mendapatkan peminjaman alamat IP selama 10 menit dan client di
 subnet 3 mendapatkan peminjaman alamat IP selama 5 menit.
+di server DHCP bagian "nano /etc/dhcp/dhcpd.conf" memiliki settingan seperti dibawah
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.2 192.168.1.99;
+    option routers 192.168.1.1;
+    option broadcast-address 192.168.1.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 300;
+    max-lease-time 3000;
+} 
+subnet 192.168.0.0 netmask 255.255.255.0 {
+    range 192.168.0.2 192.168.0.10;
+    range 192.168.0.20 192.168.0.30;
+    option routers 192.168.0.1;
+    option broadcast-address 192.168.0.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 600;
+    max-lease-time 6000;
+}
+
+dan yang memperngaruhi waktu ialah
+  default-lease-time(max-lease-time adalah total waktu perpanjangan ip yang dimiliki, supaya ip tidak berubah terlalu cepat)
 
 5. (4) Masing-masing client harus mendapatkan konfigurasi DNS / nameserver yang terdiri atas
 IP ARTICUNO , 202.46.129.2 , dan 10.151.36.7 secara otomatis.
+di server DHCP bagian "nano /etc/dhcp/dhcpd.conf" memiliki settingan seperti dibawah
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.2 192.168.1.99;
+    option routers 192.168.1.1;
+    option broadcast-address 192.168.1.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 300;
+    max-lease-time 3000;
+} 
+subnet 192.168.0.0 netmask 255.255.255.0 {
+    range 192.168.0.2 192.168.0.10;
+    range 192.168.0.20 192.168.0.30;
+    option routers 192.168.0.1;
+    option broadcast-address 192.168.0.255;
+    option domain-name-servers 202.46.129.2, 10.151.36.7, 10.151.73.34;
+    default-lease-time 600;
+    max-lease-time 6000;
+}
+dan yang memperngaruhi nama DNS yanga keluar ialah
+  option domain-name-servers(untuk penulisannya adalah IP1, IP2, ..., ...)
 
 6. (5) Client PSYDUCK selalu mendapatkan IP 192.168.1.28, TANPA menggunakan
 konfigurasi IP Statis.
-
+di server DHCP bagian "nano /etc/dhcp/dhcpd.conf" memiliki settingan seperti dibawah
+host psyduck {
+    hardware ethernet 4e:15:5b:3a:a2:4d;
+    fixed-address 192.168.1.28;
+} 
 
 7. (6) Prof. Oak meminta anda membuatkan user
 otentikasi dengan format:
